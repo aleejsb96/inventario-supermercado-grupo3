@@ -1,0 +1,186 @@
+<app-navbar></app-navbar>
+
+<div class="container-fluid mt-4 px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="titulo-pagina">📋 Órdenes de Compra</h2>
+    <button class="btn btn-agregar" (click)="abrirModalNuevo()">+ Nueva Orden</button>
+  </div>
+
+  @if (exito) {
+    <div class="alert alert-success">{{ exito }}</div>
+  }
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <div class="tabla-contenedor">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Proveedor</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (o of ordenes; track o.id) {
+          <tr>
+            <td>{{ o.id }}</td>
+            <td>{{ o.proveedor_nombre }}</td>
+            <td>{{ o.fecha_orden | date:'dd/MM/yyyy' }}</td>
+            <td>{{ o.total ? 'L ' + o.total : '-' }}</td>
+            <td><span [class]="getBadgeClass(o.estado)">{{ o.estado }}</span></td>
+            <td>
+              <button class="btn btn-sm btn-ver me-1" (click)="verDetalle(o)">👁️ Ver</button>
+              @if (o.estado === 'pendiente') {
+                <button class="btn btn-sm btn-completar me-1" (click)="cambiarEstado(o.id, 'completada')">✅ Completar</button>
+                <button class="btn btn-sm btn-cancelar-orden" (click)="cambiarEstado(o.id, 'cancelada')">❌ Cancelar</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (ordenes.length === 0) {
+      <p class="text-center text-muted mt-3">No hay órdenes registradas</p>
+    }
+  </div>
+</div>
+
+@if (mostrarModal) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-caja modal-grande" (click)="$event.stopPropagation()">
+      <div class="modal-encabezado">
+        <h5>➕ Nueva Orden de Compra</h5>
+        <button class="btn-cerrar" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        @if (error) {
+          <div class="alert alert-danger">{{ error }}</div>
+        }
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Proveedor</label>
+            <select class="form-control" [(ngModel)]="ordenForm.proveedor_id">
+              <option value="">Seleccionar proveedor...</option>
+              @for (p of proveedores; track p.id) {
+                <option [value]="p.id">{{ p.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Observaciones</label>
+            <input type="text" class="form-control" [(ngModel)]="ordenForm.observaciones" placeholder="Notas opcionales" />
+          </div>
+        </div>
+
+        <hr>
+        <h6 class="text-success fw-bold">Agregar Productos</h6>
+        <div class="row g-2 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Producto</label>
+            <select class="form-control" [(ngModel)]="itemTemp.producto_id">
+              <option value="">Seleccionar producto...</option>
+              @for (p of productos; track p.id) {
+                <option [value]="p.id">{{ p.nombre }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Cantidad</label>
+            <input type="number" class="form-control" [(ngModel)]="itemTemp.cantidad" placeholder="0" min="1" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Precio Unitario</label>
+            <input type="number" class="form-control" [(ngModel)]="itemTemp.precio_unitario" placeholder="0.00" />
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-agregar-item w-100" (click)="agregarItem()">+ Agregar</button>
+          </div>
+        </div>
+
+        @if (ordenForm.items.length > 0) {
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of ordenForm.items; track $index) {
+                <tr>
+                  <td>{{ item.nombre }}</td>
+                  <td>{{ item.cantidad }}</td>
+                  <td>L {{ item.precio_unitario }}</td>
+                  <td>L {{ item.cantidad * item.precio_unitario }}</td>
+                  <td><button class="btn btn-sm btn-eliminar" (click)="quitarItem($index)">✕</button></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <div class="text-end fw-bold text-success">Total: L {{ calcularTotal() }}</div>
+        }
+      </div>
+      <div class="modal-pie">
+        <button class="btn btn-cancelar me-2" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-guardar" (click)="guardar()">Crear Orden</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (mostrarDetalle && ordenDetalle) {
+  <div class="modal-overlay" (click)="cerrarDetalle()">
+    <div class="modal-caja modal-grande" (click)="$event.stopPropagation()">
+      <div class="modal-encabezado">
+        <h5>👁️ Detalle Orden #{{ ordenDetalle.id }}</h5>
+        <button class="btn-cerrar" (click)="cerrarDetalle()">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        <div class="row mb-3">
+          <div class="col-md-4"><strong>Proveedor:</strong> {{ ordenDetalle.proveedor_nombre }}</div>
+          <div class="col-md-4"><strong>Fecha:</strong> {{ ordenDetalle.fecha_orden | date:'dd/MM/yyyy' }}</div>
+          <div class="col-md-4"><strong>Estado:</strong> <span [class]="getBadgeClass(ordenDetalle.estado)">{{ ordenDetalle.estado }}</span></div>
+        </div>
+        @if (ordenDetalle.observaciones) {
+          <p><strong>Observaciones:</strong> {{ ordenDetalle.observaciones }}</p>
+        }
+        @if (ordenDetalle.items && ordenDetalle.items.length > 0) {
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of ordenDetalle.items; track $index) {
+                <tr>
+                  <td>{{ item.producto_nombre }}</td>
+                  <td>{{ item.cantidad }}</td>
+                  <td>L {{ item.precio_unitario }}</td>
+                  <td>L {{ item.subtotal }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <div class="text-end fw-bold text-success">Total: L {{ ordenDetalle.total }}</div>
+        } @else {
+          <p class="text-muted">No hay productos en esta orden</p>
+        }
+      </div>
+      <div class="modal-pie">
+        <button class="btn btn-cancelar" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

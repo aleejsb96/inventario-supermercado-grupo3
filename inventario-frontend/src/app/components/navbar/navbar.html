@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/dashboard">
+      🛒 <strong>StockMart</strong>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard">📊 Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/productos">📦 Productos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/proveedores">🏭 Proveedores</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ordenes">📋 Órdenes</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown" (mouseenter)="mostrarMenu=true" (mouseleave)="mostrarMenu=false">
+          <a class="nav-link dropdown-toggle" href="#" (click)="$event.preventDefault()">
+            👤 {{ usuario?.nombre }}
+          </a>
+          @if (mostrarMenu) {
+            <ul class="dropdown-menu dropdown-menu-end show">
+              <li><span class="dropdown-item-text"><small>{{ usuario?.rol }}</small></span></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" style="cursor:pointer" (click)="logout()">🚪 Cerrar Sesión</a></li>
+            </ul>
+          }
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

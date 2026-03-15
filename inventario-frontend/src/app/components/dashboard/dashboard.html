@@ -1,0 +1,84 @@
+<app-navbar></app-navbar>
+
+<div class="container-fluid mt-4 px-4">
+  <h2 class="titulo-dashboard">📊 Dashboard</h2>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card-total verde">
+        <div class="card-icon">📦</div>
+        <div class="card-info">
+          <h3>{{ totales?.productos || 0 }}</h3>
+          <p>Productos</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-total amarillo">
+        <div class="card-icon">🏭</div>
+        <div class="card-info">
+          <h3>{{ totales?.proveedores || 0 }}</h3>
+          <p>Proveedores</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-total verde">
+        <div class="card-icon">📋</div>
+        <div class="card-info">
+          <h3>{{ totales?.ordenes || 0 }}</h3>
+          <p>Total Órdenes</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card-total amarillo">
+        <div class="card-icon">⏳</div>
+        <div class="card-info">
+          <h3>{{ totales?.ordenes_pendientes || 0 }}</h3>
+          <p>Órdenes Pendientes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card-seccion">
+        <h5>⚠️ Productos con Stock Bajo</h5>
+        @if (stockBajo.length === 0) {
+          <p class="text-success">✅ Todos los productos tienen stock suficiente</p>
+        } @else {
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of stockBajo; track p.id) {
+                <tr class="table-danger">
+                  <td>{{ p.nombre }}</td>
+                  <td>{{ p.stock_actual }}</td>
+                  <td>{{ p.stock_minimo }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card-seccion">
+        <h5>📅 Órdenes por Mes</h5>
+        @if (ordenesPorMes.length === 0) {
+          <p class="text-muted">No hay órdenes registradas</p>
+        } @else {
+          <canvas #graficoOrdenes></canvas>
+        }
+      </div>
+    </div>
+  </div>
+</div>

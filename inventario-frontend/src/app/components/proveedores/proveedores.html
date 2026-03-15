@@ -1,0 +1,98 @@
+<app-navbar></app-navbar>
+
+<div class="container-fluid mt-4 px-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="titulo-pagina">🏭 Proveedores</h2>
+    @if (esAdmin) {
+      <button class="btn btn-agregar" (click)="abrirModalNuevo()">+ Agregar Proveedor</button>
+    }
+  </div>
+
+  @if (exito) {
+    <div class="alert alert-success">{{ exito }}</div>
+  }
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <div class="tabla-contenedor">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Contacto</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of proveedores; track p.id) {
+          <tr>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.contacto }}</td>
+            <td>{{ p.telefono }}</td>
+            <td>{{ p.email }}</td>
+            <td>{{ p.direccion }}</td>
+            <td>
+              @if (esAdmin) {
+                <button class="btn btn-sm btn-editar me-1" (click)="abrirModalEditar(p)">✏️ Editar</button>
+                <button class="btn btn-sm btn-eliminar" (click)="eliminar(p.id)">🗑️ Eliminar</button>
+              } @else {
+                <span class="text-muted fst-italic">Sin permisos</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (proveedores.length === 0) {
+      <p class="text-center text-muted mt-3">No hay proveedores registrados</p>
+    }
+  </div>
+</div>
+
+@if (mostrarModal) {
+  <div class="modal-overlay" (click)="cerrarModal()">
+    <div class="modal-caja" (click)="$event.stopPropagation()">
+      <div class="modal-encabezado">
+        <h5>{{ modoEdicion ? '✏️ Editar Proveedor' : '➕ Nuevo Proveedor' }}</h5>
+        <button class="btn-cerrar" (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-cuerpo">
+        @if (error) {
+          <div class="alert alert-danger">{{ error }}</div>
+        }
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="proveedorForm.nombre" placeholder="Nombre empresa" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contacto</label>
+            <input type="text" class="form-control" [(ngModel)]="proveedorForm.contacto" placeholder="Nombre del contacto" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Teléfono</label>
+            <input type="text" class="form-control" [(ngModel)]="proveedorForm.telefono" placeholder="0000-0000" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="proveedorForm.email" placeholder="correo@empresa.com" />
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-control" [(ngModel)]="proveedorForm.direccion" placeholder="Dirección completa" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-pie">
+        <button class="btn btn-cancelar me-2" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-guardar" (click)="guardar()">
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

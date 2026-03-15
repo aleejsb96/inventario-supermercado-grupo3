@@ -1,0 +1,28 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">🛒</div>
+      <h2>StockMart</h2>
+      <p>Sistema de Inventarios</p>
+    </div>
+    <div class="login-body">
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control" [(ngModel)]="email" placeholder="correo@ejemplo.com" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-control" [(ngModel)]="password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-success w-100" (click)="login()" [disabled]="cargando">
+        {{ cargando ? 'Iniciando...' : 'Iniciar Sesión' }}
+      </button>
+      <div class="text-center mt-3">
+        <small>¿No tienes cuenta? <a routerLink="/registro">Regístrate</a></small>
+      </div>
+    </div>
+  </div>
+</div>

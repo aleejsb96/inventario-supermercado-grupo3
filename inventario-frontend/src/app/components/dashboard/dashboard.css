@@ -1,0 +1,54 @@
+.titulo-dashboard {
+  color: #1a6b1a;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.card-total {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  gap: 15px;
+}
+
+.card-total.verde {
+  background: #1a6b1a;
+  color: white;
+}
+
+.card-total.amarillo {
+  background: #f5c500;
+  color: #1a6b1a;
+}
+
+.card-icon {
+  font-size: 40px;
+}
+
+.card-info h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.card-info p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.card-seccion {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-top: 4px solid #1a6b1a;
+}
+
+.card-seccion h5 {
+  color: #1a6b1a;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
